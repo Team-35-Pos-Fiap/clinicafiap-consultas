@@ -25,6 +25,8 @@ public class ConsultaController {
 
 	private IConsultaService consultaService;
 
+	private IConsultaService emailService;
+
 	public ConsultaController(IConsultaService consultaService) {
 		this.consultaService = consultaService;
 	}
@@ -32,6 +34,8 @@ public class ConsultaController {
 	@PostMapping
 	public ResponseEntity<Void> agendarConsulta(@Valid @RequestBody DadosConsultaDtoRequest dados) {
 		consultaService.agendar(dados);
+
+		emailService.sendMessageNotificacao(email);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
