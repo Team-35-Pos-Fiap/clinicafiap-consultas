@@ -9,5 +9,5 @@ RUN mvn clean install
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 EXPOSE 8081
-COPY --from=builder /app/target/*.jar agendamentos.jar
-ENTRYPOINT ["java", "-jar", "agendamentos.jar"]
+COPY --from=builder /app/target/*.jar consultas.jar
+ENTRYPOINT ["java", "-jar", "consultas.jar"]
