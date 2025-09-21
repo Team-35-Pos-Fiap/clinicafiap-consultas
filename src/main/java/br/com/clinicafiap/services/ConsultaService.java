@@ -3,6 +3,7 @@ package br.com.clinicafiap.services;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.clinicafiap.services.interfaces.INotificacaoService;
 import org.springframework.stereotype.Service;
 
 import br.com.clinicafiap.entities.domain.Consulta;
@@ -18,6 +19,7 @@ public class ConsultaService implements IConsultaService {
 
 	private IConsultaRepository consultaRepository;
 	private IUsuarioService usuarioService;
+	private INotificacaoService notificacaoService;
 
 
 	public ConsultaService(IConsultaRepository consultaRepository) {
@@ -27,8 +29,16 @@ public class ConsultaService implements IConsultaService {
 	@Override
 	public void agendar(DadosConsultaDtoRequest dados) {
 		Consulta consulta = ConsultaMapper.toConsulta(dados);
-		
-		consultaRepository.salvar(ConsultaMapper.toConsultaDb(consulta));
+
+		try {
+			consultaRepository.salvar(ConsultaMapper.toConsultaDb(consulta));
+
+			notificacaoService.sendMessageNotificacao(ConsultaMapper.toConsultaDb(consulta));
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package br.com.clinicafiap.configs;
 
-import br.com.clinicafiap.entities.record.EmailRecord;
+import br.com.clinicafiap.entities.record.NotificacaoRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class KafkaProducerConfig {
         private String bootstrapAddress;
 
         @Bean
-        public ProducerFactory<String, EmailRecord> emailProducerFactory() {
+        public ProducerFactory<String, NotificacaoRecord> notificacaoProducerFactory() {
                 Map<String, Object> props = new HashMap<>();
                 props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
                 props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -31,7 +31,7 @@ public class KafkaProducerConfig {
         }
 
         @Bean
-        public KafkaTemplate<String, EmailRecord> emailKafkaTemplate() {
-                return new KafkaTemplate<>(emailProducerFactory());
+        public KafkaTemplate<String, NotificacaoRecord> notificacaoKafkaTemplate() {
+                return new KafkaTemplate<>(notificacaoProducerFactory());
         }
 }
