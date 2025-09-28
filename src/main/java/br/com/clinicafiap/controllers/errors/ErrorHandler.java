@@ -3,6 +3,7 @@ package br.com.clinicafiap.controllers.errors;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.clinicafiap.exceptions.PublicKeyFetchException;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
+	@ExceptionHandler(PublicKeyFetchException.class)
+	public ResponseEntity<MensagemResponse> trataPublicKeyFetchException(PublicKeyFetchException e) {
+		log.error(e.getMessage(), e);
+
+		return getResponse(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
+	}
+
 	@ExceptionHandler(NullPointerException.class)
 	public ResponseEntity<MensagemResponse> trataNullPointerException(NullPointerException e) {
 		log.error(e.getMessage(), e);

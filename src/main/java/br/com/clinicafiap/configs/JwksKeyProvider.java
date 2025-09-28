@@ -1,5 +1,6 @@
 package br.com.clinicafiap.configs;
 
+import br.com.clinicafiap.exceptions.PublicKeyFetchException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +36,7 @@ public class JwksKeyProvider {
                 return KeyFactory.getInstance("RSA").generatePublic(spec);
             }
         } catch (Exception ex) {
-            throw new IllegalStateException("Não foi possível buscar a chave pública do usuarios-service", ex);
+            throw new PublicKeyFetchException("Não foi possível buscar a chave pública do usuarios-service");
         }
     }
 }
