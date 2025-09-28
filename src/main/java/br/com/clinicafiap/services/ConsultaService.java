@@ -3,6 +3,7 @@ package br.com.clinicafiap.services;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.clinicafiap.grpc.UsuarioGrpcClient;
 import org.springframework.stereotype.Service;
 
 import br.com.clinicafiap.entities.domain.Consulta;
@@ -18,14 +19,25 @@ public class ConsultaService implements IConsultaService {
 
 	private IConsultaRepository consultaRepository;
 	private IUsuarioService usuarioService;
+	private UsuarioGrpcClient usuarioGrpcClient;
 
 
-	public ConsultaService(IConsultaRepository consultaRepository) {
+	public ConsultaService(IConsultaRepository consultaRepository, IUsuarioService usuarioService, UsuarioGrpcClient usuarioGrpcClient) {
 		this.consultaRepository = consultaRepository;
+		this.usuarioService = usuarioService;
+		this.usuarioGrpcClient = usuarioGrpcClient;
 	}
 	
 	@Override
 	public void agendar(DadosConsultaDtoRequest dados) {
+		var validacao = usuarioGrpcClient.validaUsuariosParaAgendamento(
+				dados.idMedico(), dados.idPaciente(), dados.idUsuarioCriacao()
+		);
+
+		if (!validacao.getErrosList().isEmpty()) {
+			throw new IllegalArgumentException(validacao.getErrosList().toString());
+		}
+
 		Consulta consulta = ConsultaMapper.toConsulta(dados);
 		
 		consultaRepository.salvar(ConsultaMapper.toConsultaDb(consulta));
