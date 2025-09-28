@@ -9,8 +9,10 @@ import br.com.clinicafiap.exceptions.MedicoInvalidoException;
 import br.com.clinicafiap.exceptions.PacienteInvalidoException;
 import br.com.clinicafiap.exceptions.UsuarioCriacaoInvalidoException;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class Consulta {
 	private UUID id;
 	private UUID idMedico;
@@ -83,5 +85,15 @@ public class Consulta {
 		if(idMedico == null) {
 			throw new MedicoInvalidoException("O id do médico informado é inválido.");
 		}
+	}
+
+	public void atualizarData(LocalDateTime data) {
+		this.dataConsulta = data;
+	}
+
+	public void cancelarConsulta(UUID id) {
+		this.status = StatusConsulta.CANCELADA;
+		this.dataAtualizacao = LocalDateTime.now();
+		this.idUsuarioAtualizacao = id;
 	}
 }

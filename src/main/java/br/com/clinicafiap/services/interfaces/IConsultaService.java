@@ -1,5 +1,6 @@
 package br.com.clinicafiap.services.interfaces;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,4 +13,10 @@ public interface IConsultaService {
 	List<DadosConsultaDtoResponse> buscarConsultasPorMedico(UUID idMedico);
 
 	List<DadosConsultaDtoResponse> buscarConsultasPorPaciente(UUID idPaciente);
+
+	void atualizarDataConsulta(UUID idConsulta, LocalDateTime data);
+
+	void cancelarConsulta(UUID idConsulta, UUID idUsuarioCancelamento);
+
+	DadosConsultaDtoResponse buscarPorId(UUID idConsulta);
 }
