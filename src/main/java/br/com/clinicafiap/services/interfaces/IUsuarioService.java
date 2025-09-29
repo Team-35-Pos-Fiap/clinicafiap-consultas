@@ -2,8 +2,8 @@ package br.com.clinicafiap.services.interfaces;
 
 import java.util.UUID;
 
-import br.com.clinicafiap.entities.dto.UsuarioDtoResponse;
+import br.com.clinicafiap.entities.dto.UsuarioDto;
 
 public interface IUsuarioService {
-	UsuarioDtoResponse buscarPorId(UUID id);
+	UsuarioDto buscarPorId(UUID id);
 }

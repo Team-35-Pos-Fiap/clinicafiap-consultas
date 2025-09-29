@@ -2,13 +2,14 @@ package br.com.clinicafiap.mappers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import br.com.clinicafiap.entities.db.ConsultaDb;
 import br.com.clinicafiap.entities.domain.Consulta;
 import br.com.clinicafiap.entities.dto.DadosConsultaDtoRequest;
 import br.com.clinicafiap.entities.dto.DadosConsultaDtoResponse;
-import br.com.clinicafiap.entities.dto.UsuarioDtoResponse;
+import br.com.clinicafiap.entities.dto.UsuarioDto;
 import br.com.clinicafiap.entities.enums.StatusConsulta;
 
 public class ConsultaMapper {
@@ -32,7 +33,12 @@ public class ConsultaMapper {
 		return consultas.stream().map(c -> ConsultaMapper.toConsulta(c)).collect(Collectors.toList());
 	}
 
-	public static DadosConsultaDtoResponse toDadosConsultaDtoResponse(Consulta consulta, UsuarioDtoResponse medico, UsuarioDtoResponse paciente, UsuarioDtoResponse usuarioCriacao) {
-		return null;
+	public static DadosConsultaDtoResponse toDadosConsultaDtoResponse(Consulta consulta, UsuarioDto medico, UsuarioDto paciente, UsuarioDto usuarioCriacao) {
+		return new DadosConsultaDtoResponse(consulta.getId(), 
+											consulta.getDataConsulta(), 
+											new UsuarioDto(UUID.randomUUID(), "nome medico", "medico"), 
+											new UsuarioDto(UUID.randomUUID(), "nome paciente", "paciente"), 
+											new UsuarioDto(UUID.randomUUID(), "nome medico", "medico"),
+											consulta.getStatus());
 	}
 }
