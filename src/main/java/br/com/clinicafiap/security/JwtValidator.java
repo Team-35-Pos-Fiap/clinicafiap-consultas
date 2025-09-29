@@ -11,19 +11,16 @@ import java.security.PublicKey;
 @Component
 public class JwtValidator {
 
-    private final PublicKey publicKey;
-    private final String expectedIssuer;
+    private final JwksClient jwksClient;
 
-    public JwtValidator(PublicKey publicKey,
-                        @Value("${security.jwt.issuer:usuarios-service}") String expectedIssuer) {
-        this.publicKey = publicKey;
-        this.expectedIssuer = expectedIssuer;
+    public JwtValidator(JwksClient jwksClient) {
+        this.jwksClient = jwksClient;
     }
 
     public Jws<Claims> parse(String token) {
+        PublicKey key = jwksClient.fetchKey();
         return Jwts.parserBuilder()
-            .requireIssuer(expectedIssuer)
-            .setSigningKey(publicKey)
+            .setSigningKey(key)
             .build()
             .parseClaimsJws(token);
     }

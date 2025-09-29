@@ -66,7 +66,7 @@ public class ConsultaController {
 	}
 
 	@PreAuthorize("#idPaciente == principal.uid or hasAnyRole('MEDICO','ENFERMEIRO')")
-	@GetMapping("pacientes/{id-paciente}")
+	@GetMapping("/pacientes/{id-paciente}")
 	public ResponseEntity<List<DadosConsultaDtoResponse>> buscarConsultasPorPaciente(@PathVariable(name = "id-paciente") @Valid @NotNull UUID idPaciente) {
 		return ResponseEntity.status(HttpStatus.OK).body(consultaService.buscarConsultasPorPaciente(idPaciente));
 	}
