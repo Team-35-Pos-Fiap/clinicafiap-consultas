@@ -4,6 +4,7 @@ import br.com.clinicafiap.exceptions.PublicKeyFetchException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,7 +20,8 @@ import java.util.Base64;
 public class JwksClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String jwksUrl = "http://localhost:8083/usuarios-service/auth/.well-known/jwks.json";
+    @Value("${security.jwt.jwks-url:http://localhost:8083/usuarios-service/auth/.well-known/jwks.json}")
+    private String jwksUrl;
 
     public PublicKey fetchKey() {
         try {

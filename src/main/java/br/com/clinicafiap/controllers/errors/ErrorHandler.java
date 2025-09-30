@@ -7,6 +7,7 @@ import br.com.clinicafiap.exceptions.PublicKeyFetchException;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,6 +32,12 @@ public class ErrorHandler {
 		log.error(e.getMessage(), e);
 
 		return getResponse(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<MensagemResponse> trataBadCredentialsException(AccessDeniedException e) {
+		log.error(e.getMessage(), e);
+		return getResponse(HttpStatus.FORBIDDEN, "Acesso negado");
 	}
 
 	@ExceptionHandler(NullPointerException.class)
