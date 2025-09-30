@@ -9,6 +9,7 @@ import br.com.clinicafiap.entities.db.ConsultaDb;
 import br.com.clinicafiap.entities.domain.Consulta;
 import br.com.clinicafiap.entities.dto.DadosConsultaDtoRequest;
 import br.com.clinicafiap.entities.dto.DadosConsultaDtoResponse;
+import br.com.clinicafiap.entities.dto.PerfilDto;
 import br.com.clinicafiap.entities.dto.UsuarioDto;
 import br.com.clinicafiap.entities.enums.StatusConsulta;
 
@@ -36,9 +37,9 @@ public class ConsultaMapper {
 	public static DadosConsultaDtoResponse toDadosConsultaDtoResponse(Consulta consulta, UsuarioDto medico, UsuarioDto paciente, UsuarioDto usuarioCriacao) {
 		return new DadosConsultaDtoResponse(consulta.getId(), 
 											consulta.getDataConsulta(), 
-											new UsuarioDto(UUID.randomUUID(), "nome medico", "medico"), 
-											new UsuarioDto(UUID.randomUUID(), "nome paciente", "paciente"), 
-											new UsuarioDto(UUID.randomUUID(), "nome medico", "medico"),
+											new UsuarioDto(UUID.randomUUID(), "nome medico", new PerfilDto(1, "Médico"), "email"),
+											new UsuarioDto(UUID.randomUUID(), "nome paciente", new PerfilDto(2, "Paciemte"), "email"),
+											new UsuarioDto(UUID.randomUUID(), "nome medico", new PerfilDto(3, "Enfermeiro"), "email"),
 											consulta.getStatus());
 	}
 }
