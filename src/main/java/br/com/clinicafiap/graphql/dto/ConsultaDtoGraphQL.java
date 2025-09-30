@@ -1,6 +1,6 @@
 package br.com.clinicafiap.graphql.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class ConsultaDtoGraphQL {
@@ -8,17 +8,17 @@ public class ConsultaDtoGraphQL {
     private UUID idMedico;
     private UUID idPaciente;
     private UUID idUsuarioCriacao;
-    private LocalDateTime dataCriacao;
+    private OffsetDateTime dataCriacao;
     private UUID idUsuarioAtualizacao;
-    private LocalDateTime dataAtualizacao;
-    private LocalDateTime dataConsulta;
+    private OffsetDateTime dataAtualizacao;
+    private OffsetDateTime dataConsulta;
     private String status;
 
     public ConsultaDtoGraphQL() {}
 
     public ConsultaDtoGraphQL(UUID id, UUID idMedico, UUID idPaciente, UUID idUsuarioCriacao,
-                              LocalDateTime dataCriacao, UUID idUsuarioAtualizacao,
-                              LocalDateTime dataAtualizacao, LocalDateTime dataConsulta, String status) {
+                              OffsetDateTime dataCriacao, UUID idUsuarioAtualizacao,
+                              OffsetDateTime dataAtualizacao, OffsetDateTime dataConsulta, String status) {
         this.id = id;
         this.idMedico = idMedico;
         this.idPaciente = idPaciente;
@@ -50,15 +50,15 @@ public class ConsultaDtoGraphQL {
         return idUsuarioAtualizacao;
     }
 
-    public LocalDateTime getDataCriacao() {
+    public OffsetDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public LocalDateTime getDataAtualizacao() {
+    public OffsetDateTime getDataAtualizacao() {
         return dataAtualizacao;
     }
 
-    public LocalDateTime getDataConsulta() {
+    public OffsetDateTime getDataConsulta() {
         return dataConsulta;
     }
 

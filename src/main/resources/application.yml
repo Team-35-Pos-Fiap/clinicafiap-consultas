@@ -41,6 +41,6 @@ eureka:
     hostname: localhost
 grpc:
   client:
-    clinicafiap-usuarios:
+    usuario:
       address: "static://clinicafiap-usuarios:9090"
       negotiationType: PLAINTEXT

@@ -9,6 +9,8 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,5 +39,21 @@ public class ConsultaQueryResolver {
                 consultaRepository.buscarConsultasPorMedico(idMedico)
         );
         return consultas.stream().map(ConsultaGraphQLMapper::toConsultaDtoGraphQL).collect(Collectors.toList());
+    }
+
+    @QueryMapping
+    public List<ConsultaDtoGraphQL> consultaPorPeriodo(@Argument LocalDateTime dataInicio,
+                                                       @Argument LocalDateTime dataFim) {
+        List<Consulta> consultas = ConsultaMapper.toListConsultas(
+                consultaRepository.buscarConsultasPorPeriodo(dataInicio, dataFim)
+        );
+        return consultas.stream()
+                .filter(c -> c.getDataConsulta() != null
+                        && !c.getDataConsulta().isBefore(dataInicio)
+                        && !c.getDataConsulta().isAfter(dataFim))
+                .sorted(Comparator.comparing(Consulta::getDataConsulta,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(ConsultaGraphQLMapper::toConsultaDtoGraphQL)
+                .collect(Collectors.toList());
     }
 }

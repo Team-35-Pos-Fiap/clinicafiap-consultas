@@ -1,7 +1,9 @@
 package br.com.clinicafiap.grpc;
 
 
+import br.com.clinicafiap.grpc.exceptions.GrpcExceptionTranslator;
 import br.com.clinicafiap.grpc.usuario.*;
+import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Component;
 
@@ -14,17 +16,25 @@ public class UsuarioGrpcClient {
     private UsuarioServiceGrpc.UsuarioServiceBlockingStub usuarioServiceBlockingStub;
 
     public UsuarioResponse getUsuario(UUID id) {
-        return usuarioServiceBlockingStub.getUsuario(GetUsuarioRequest.newBuilder()
-                .setId(id.toString()).build());
+        try {
+            return usuarioServiceBlockingStub.getUsuario(GetUsuarioRequest.newBuilder()
+                    .setId(id.toString()).build());
+        } catch (StatusRuntimeException e) {
+            throw GrpcExceptionTranslator.traduzirException(e);
+        }
     }
 
     public ValidaUsuariosParaAgendamentoResponse validaUsuariosParaAgendamento(UUID idMedico, UUID idPaciente, UUID idUsuarioCriacao) {
-        return usuarioServiceBlockingStub.validaUsuariosParaAgendamento(
-                ValidaUsuariosParaAgendamentoRequest.newBuilder()
-                        .setIdMedico(idMedico.toString())
-                        .setIdPaciente(idPaciente.toString())
-                        .setIdUsuarioCriacao(idUsuarioCriacao.toString())
-                        .build()
-        );
+        try {
+            return usuarioServiceBlockingStub.validaUsuariosParaAgendamento(
+                    ValidaUsuariosParaAgendamentoRequest.newBuilder()
+                            .setIdMedico(idMedico.toString())
+                            .setIdPaciente(idPaciente.toString())
+                            .setIdUsuarioCriacao(idUsuarioCriacao.toString())
+                            .build()
+            );
+        } catch (StatusRuntimeException e) {
+            throw GrpcExceptionTranslator.traduzirException(e);
+        }
     }
 }

@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.clinicafiap.grpc.UsuarioGrpcClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -28,24 +27,15 @@ public class ConsultaService implements IConsultaService {
 
 	private IConsultaRepository consultaRepository;
 	private IUsuarioService usuarioService;
-	private UsuarioGrpcClient usuarioGrpcClient;
 
-
-	public ConsultaService(IConsultaRepository consultaRepository, IUsuarioService usuarioService, UsuarioGrpcClient usuarioGrpcClient) {
+	public ConsultaService(IConsultaRepository consultaRepository, IUsuarioService usuarioService) {
 		this.consultaRepository = consultaRepository;
 		this.usuarioService = usuarioService;
-		this.usuarioGrpcClient = usuarioGrpcClient;
 	}
 	
 	@Override
 	public void agendar(DadosConsultaDtoRequest dados) {
-		var validacao = usuarioGrpcClient.validaUsuariosParaAgendamento(
-				dados.idMedico(), dados.idPaciente(), dados.idUsuarioCriacao()
-		);
-
-		if (!validacao.getErrosList().isEmpty()) {
-			throw new IllegalArgumentException(validacao.getErrosList().toString());
-		}
+		validaUsuariosParaAgendamento(dados);
 
 		salvar(toConsulta(dados));
 	}
@@ -115,9 +105,7 @@ public class ConsultaService implements IConsultaService {
 	}
 
 	private UsuarioDto buscarUsuarioPorId(UUID idUsuarioCancelamento) {
-		// buscar do serviço de usuário, pois vai validar se o usuário existe ou não.
-
-		return new UsuarioDto(UUID.randomUUID(), "nome usuario cancelamento", "medico");
+		return usuarioService.buscarPorId(idUsuarioCancelamento);
 	}
 
 	private void trataValidacoes(Consulta consulta, LocalDateTime data) {
@@ -144,6 +132,16 @@ public class ConsultaService implements IConsultaService {
 		}
 	}
 
+	private void validaUsuariosParaAgendamento(DadosConsultaDtoRequest dados) {
+		var validacao = usuarioService.validaUsuariosParaAgendamento(
+				dados.idMedico(), dados.idPaciente(), dados.idUsuarioCriacao()
+		);
+
+		if (!validacao.getErrosList().isEmpty()) {
+			throw new IllegalArgumentException(validacao.getErrosList().toString());
+		}
+	}
+
 	private List<DadosConsultaDtoResponse> toListDadosConsultaDtoResponse(List<Consulta> consultas) {
 		return consultas.stream().map(c -> ConsultaMapper.toDadosConsultaDtoResponse(c, usuarioService.buscarPorId(c.getIdMedico()), 
 																						usuarioService.buscarPorId(c.getIdPaciente()), 
@@ -151,11 +149,10 @@ public class ConsultaService implements IConsultaService {
 	}
 
 	private DadosConsultaDtoResponse toDadosConsultaDtoResponse(Consulta consulta) {
-		return ConsultaMapper.toDadosConsultaDtoResponse(consulta, null, null, null);
-		/*return ConsultaMapper.toDadosConsultaDtoResponse(consulta,
+		return ConsultaMapper.toDadosConsultaDtoResponse(consulta,
 														 usuarioService.buscarPorId(consulta.getIdMedico()),
 														 usuarioService.buscarPorId(consulta.getIdPaciente()),
-														 usuarioService.buscarPorId(consulta.getIdUsuarioCriacao()));*/
+														 usuarioService.buscarPorId(consulta.getIdUsuarioCriacao()));
 	}
 
 	private void salvar(Consulta consulta) {

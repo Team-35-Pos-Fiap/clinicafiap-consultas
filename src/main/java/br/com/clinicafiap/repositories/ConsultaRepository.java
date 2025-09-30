@@ -54,4 +54,9 @@ public class ConsultaRepository implements IConsultaRepository {
 	public List<ConsultaDb> buscarConsultasFuturas() {
 		return consultaRepository.buscarConsultasFuturas();
 	}
+
+	@Override
+	public List<ConsultaDb> buscarConsultasPorPeriodo(LocalDateTime dataInicio, LocalDateTime dataFim) {
+		return consultaRepository.findAllByDataConsultaBetween(dataInicio, dataFim);
+	}
 }

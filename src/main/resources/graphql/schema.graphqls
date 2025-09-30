@@ -15,4 +15,5 @@ type Consulta {
 type Query {
     consultaPorPaciente(idPaciente: ID!): [Consulta!]!
     consultaPorMedico(idMedico: ID!): [Consulta!]!
+    consultaPorPeriodo(dataInicio: DateTime!, dataFim: DateTime!): [Consulta!]!
 }

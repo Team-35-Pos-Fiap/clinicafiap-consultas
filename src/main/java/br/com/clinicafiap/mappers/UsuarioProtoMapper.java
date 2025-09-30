@@ -1,6 +1,6 @@
 package br.com.clinicafiap.mappers;
 
-import br.com.clinicafiap.entities.dto.UsuarioDtoResponse;
+import br.com.clinicafiap.entities.dto.UsuarioDto;
 import br.com.clinicafiap.grpc.usuario.TipoPerfil;
 import br.com.clinicafiap.grpc.usuario.UsuarioResponse;
 
@@ -17,14 +17,12 @@ public class UsuarioProtoMapper {
         };
     }
 
-    public static UsuarioDtoResponse toUsuarioDtoResponse(UsuarioResponse usuarioResponse) {
+    public static UsuarioDto toUsuarioDto(UsuarioResponse usuarioResponse) {
         String perfilNome = toPerfilString(usuarioResponse.getPerfil());
 
-        return new UsuarioDtoResponse(
+        return new UsuarioDto(
                 UUID.fromString(usuarioResponse.getId()),
                 usuarioResponse.getNome(),
-                usuarioResponse.getEmail(),
-                usuarioResponse.getAtivo(),
                 perfilNome
         );
     }
