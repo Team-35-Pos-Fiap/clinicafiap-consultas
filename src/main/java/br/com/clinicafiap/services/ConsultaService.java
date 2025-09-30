@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import br.com.clinicafiap.grpc.UsuarioGrpcClient;
+import br.com.clinicafiap.services.interfaces.INotificacaoService;
 import org.springframework.stereotype.Service;
 
 import br.com.clinicafiap.entities.db.ConsultaDb;
@@ -29,6 +30,7 @@ public class ConsultaService implements IConsultaService {
 	private IConsultaRepository consultaRepository;
 	private IUsuarioService usuarioService;
 	private UsuarioGrpcClient usuarioGrpcClient;
+	private INotificacaoService notificacaoService;
 
 	public ConsultaService(IConsultaRepository consultaRepository, IUsuarioService usuarioService, UsuarioGrpcClient usuarioGrpcClient) {
 
@@ -48,8 +50,16 @@ public class ConsultaService implements IConsultaService {
 		}
 
 		Consulta consulta = ConsultaMapper.toConsulta(dados);
-		
-		consultaRepository.salvar(ConsultaMapper.toConsultaDb(consulta));
+
+		try {
+			consultaRepository.salvar(ConsultaMapper.toConsultaDb(consulta));
+
+			notificacaoService.sendMessageNotificacao(ConsultaMapper.toConsultaDb(consulta));
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
