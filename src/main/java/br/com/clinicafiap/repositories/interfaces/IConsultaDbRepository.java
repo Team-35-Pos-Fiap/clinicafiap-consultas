@@ -20,4 +20,7 @@ public interface IConsultaDbRepository extends JpaRepository<ConsultaDb, UUID>{
 		+  " where function('date', c.dataConsulta) between current_date + 1 DAY and current_date + 3 DAY "
 		+  "   and c.status = 'AGENDADA'")
 	List<ConsultaDb> buscarConsultasFuturas();
+
+	List<ConsultaDb> findAllByDataConsultaBetween(LocalDateTime dataInicio, LocalDateTime dataFim);
+
 }

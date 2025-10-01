@@ -35,10 +35,10 @@ public class ConsultaMapper {
 
 	public static DadosConsultaDtoResponse toDadosConsultaDtoResponse(Consulta consulta, UsuarioDto medico, UsuarioDto paciente, UsuarioDto usuarioCriacao) {
 		return new DadosConsultaDtoResponse(consulta.getId(), 
-											consulta.getDataConsulta(), 
-											new UsuarioDto(UUID.randomUUID(), "nome medico", "medico"), 
-											new UsuarioDto(UUID.randomUUID(), "nome paciente", "paciente"), 
-											new UsuarioDto(UUID.randomUUID(), "nome medico", "medico"),
+											consulta.getDataConsulta(),
+											medico,
+											paciente,
+											usuarioCriacao,
 											consulta.getStatus());
 	}
 }

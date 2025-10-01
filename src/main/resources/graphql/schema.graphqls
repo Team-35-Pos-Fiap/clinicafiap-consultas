@@ -1,0 +1,19 @@
+scalar DateTime
+
+type Consulta {
+    id: ID!
+    idMedico: ID!
+    idPaciente: ID!
+    idUsuarioCriacao: ID!
+    dataCriacao: DateTime
+    idUsuarioAtualizacao: ID
+    dataAtualizacao: DateTime
+    dataConsulta: DateTime
+    status: String
+}
+
+type Query {
+    consultaPorPaciente(idPaciente: ID!): [Consulta!]!
+    consultaPorMedico(idMedico: ID!): [Consulta!]!
+    consultaPorPeriodo(dataInicio: DateTime!, dataFim: DateTime!): [Consulta!]!
+}

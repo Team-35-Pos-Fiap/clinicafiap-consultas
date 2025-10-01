@@ -18,4 +18,6 @@ public interface IConsultaRepository {
 	ConsultaDb buscarPorId(UUID idConsulta);
 
 	List<ConsultaDb> buscarConsultasFuturas();
+
+	List<ConsultaDb> buscarConsultasPorPeriodo(LocalDateTime dataInicio, LocalDateTime dataFim);
 }

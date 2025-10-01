@@ -28,12 +28,15 @@ public class ConsultaService implements IConsultaService {
 	private IConsultaRepository consultaRepository;
 	private IUsuarioService usuarioService;
 
-	public ConsultaService(IConsultaRepository consultaRepository) {
+	public ConsultaService(IConsultaRepository consultaRepository, IUsuarioService usuarioService) {
 		this.consultaRepository = consultaRepository;
+		this.usuarioService = usuarioService;
 	}
 	
 	@Override
 	public void agendar(DadosConsultaDtoRequest dados) {
+		validaUsuariosParaAgendamento(dados);
+
 		salvar(toConsulta(dados));
 	}
 
@@ -46,33 +49,33 @@ public class ConsultaService implements IConsultaService {
 	public List<DadosConsultaDtoResponse> buscarConsultasPorPaciente(UUID idPaciente) {
 		return toListDadosConsultaDtoResponse(toListConsulta(consultaRepository.buscarConsultasPorPaciente(idPaciente)));
 	}
-	
+
 	@Override
 	public void atualizarDataConsulta(UUID idConsulta, LocalDateTime data) {
 		Consulta consulta = buscarConsultaPorId(idConsulta);
 
 		trataValidacoes(consulta, data);
-		
+
 		consulta.atualizarData(data);
-		
+
 		salvar(consulta);
-		
+
 		enviarNotificacao(consulta);
 	}
-	
+
 	@Override
 	public void cancelarConsulta(UUID idConsulta, UUID idUsuarioCancelamento) {
 		Consulta consulta = buscarConsultaPorId(idConsulta);
 
 		UsuarioDto usuario = buscarUsuarioPorId(idUsuarioCancelamento);
-		
+
 		consulta.cancelarConsulta(usuario.id());
-		
+
 		salvar(consulta);
-		
+
 		enviarNotificacao(consulta);
 	}
-	
+
 	@Override
 	public DadosConsultaDtoResponse buscarPorId(UUID idConsulta) {
 		return toDadosConsultaDtoResponse(buscarConsultaPorId(idConsulta));
@@ -83,10 +86,10 @@ public class ConsultaService implements IConsultaService {
 		log.info("Início do método para recuperar as consultas futuras. Data: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 
 		enviarNotificacoes(buscarConsultasFuturas());
-		
+
 		log.info("Fim do processo para recuperar as consultas futuras. Data: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 	}
-	
+
 	private List<Consulta> buscarConsultasFuturas() {
 		return toListConsulta(consultaRepository.buscarConsultasFuturas());
 	}
@@ -97,14 +100,12 @@ public class ConsultaService implements IConsultaService {
 
 	private void enviarNotificacao(Consulta consulta) {
 		log.info("Dados da consulta: {}", consulta);
-		
+
 		// incluir o método para adicionar a notificação no serviço de mensagerias.
 	}
 
 	private UsuarioDto buscarUsuarioPorId(UUID idUsuarioCancelamento) {
-		// buscar do serviço de usuário, pois vai validar se o usuário existe ou não.
-		
-		return new UsuarioDto(UUID.randomUUID(), "nome usuario cancelamento", "medico");
+		return usuarioService.buscarPorId(idUsuarioCancelamento);
 	}
 
 	private void trataValidacoes(Consulta consulta, LocalDateTime data) {
@@ -124,11 +125,21 @@ public class ConsultaService implements IConsultaService {
 			throw new ConsultaExistenteException("A consulta não pode ser alterada pois o médico já possui uma consulta no mesmo horário.");
 		}
 	}
-	
+
 	private void validaDataConsulta(LocalDateTime dataConsulta, LocalDateTime novaData) {
 		if(dataConsulta.isEqual(novaData)) {
 			throw new DataConsultaInvalidaException("A nova data da consulta não pode ser igual a data atual consulta.");
-		} 
+		}
+	}
+
+	private void validaUsuariosParaAgendamento(DadosConsultaDtoRequest dados) {
+		var validacao = usuarioService.validaUsuariosParaAgendamento(
+				dados.idMedico(), dados.idPaciente(), dados.idUsuarioCriacao()
+		);
+
+		if (!validacao.getErrosList().isEmpty()) {
+			throw new IllegalArgumentException(validacao.getErrosList().toString());
+		}
 	}
 
 	private List<DadosConsultaDtoResponse> toListDadosConsultaDtoResponse(List<Consulta> consultas) {
@@ -136,27 +147,26 @@ public class ConsultaService implements IConsultaService {
 																						usuarioService.buscarPorId(c.getIdPaciente()), 
 																						usuarioService.buscarPorId(c.getIdUsuarioCriacao()))).toList();
 	}
-	
+
 	private DadosConsultaDtoResponse toDadosConsultaDtoResponse(Consulta consulta) {
-		return ConsultaMapper.toDadosConsultaDtoResponse(consulta, null, null, null);
-		/*return ConsultaMapper.toDadosConsultaDtoResponse(consulta, 
-														 usuarioService.buscarPorId(consulta.getIdMedico()), 
-														 usuarioService.buscarPorId(consulta.getIdPaciente()), 
-														 usuarioService.buscarPorId(consulta.getIdUsuarioCriacao()));*/
+		return ConsultaMapper.toDadosConsultaDtoResponse(consulta,
+														 usuarioService.buscarPorId(consulta.getIdMedico()),
+														 usuarioService.buscarPorId(consulta.getIdPaciente()),
+														 usuarioService.buscarPorId(consulta.getIdUsuarioCriacao()));
 	}
-	
+
 	private void salvar(Consulta consulta) {
 		consultaRepository.salvar(ConsultaMapper.toConsultaDb(consulta));
 	}
-	
+
 	private Consulta toConsulta(DadosConsultaDtoRequest dados) {
 		return ConsultaMapper.toConsulta(dados);
 	}
-	
+
 	private List<Consulta> toListConsulta(List<ConsultaDb> consultas) {
 		return ConsultaMapper.toListConsultas(consultas);
 	}
-	
+
 	private Consulta buscarConsultaPorId(UUID idConsulta) {
 		return ConsultaMapper.toConsulta(consultaRepository.buscarPorId(idConsulta));
 	}
