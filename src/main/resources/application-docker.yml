@@ -23,10 +23,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
-  graphql:
-    path: /graphql
-    graphiql:
-      enabled: true
 server:
   servlet:
     context-path: /
@@ -36,14 +32,10 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://controle-servicos:8761/eureka
   instance:
-    hostname: localhost
-grpc:
-  client:
-    usuario:
-      address: "static://clinicafiap-usuarios:9090"
-      negotiationType: PLAINTEXT
+    hostname: consultas-service
 security:
-    jwt:
-      issuer: usuarios-service
+  jwt:
+    issuer: usuarios-service
+    jwks-url: http://gateway:8083/usuarios-service/auth/.well-known/jwks.json
