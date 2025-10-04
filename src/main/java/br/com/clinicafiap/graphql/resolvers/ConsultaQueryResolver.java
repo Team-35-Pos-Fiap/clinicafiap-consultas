@@ -7,6 +7,7 @@ import br.com.clinicafiap.mappers.ConsultaMapper;
 import br.com.clinicafiap.repositories.interfaces.IConsultaRepository;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class ConsultaQueryResolver {
         this.consultaRepository = consultaRepository;
     }
 
+    @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
     @QueryMapping
     public List<ConsultaDtoGraphQL> consultaPorPaciente(@Argument UUID idPaciente) {
         List<Consulta> consultas = ConsultaMapper.toListConsultas(
@@ -33,6 +35,7 @@ public class ConsultaQueryResolver {
         return consultas.stream().map(ConsultaGraphQLMapper::toConsultaDtoGraphQL).collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
     @QueryMapping
     public List<ConsultaDtoGraphQL> consultaPorMedico(@Argument UUID idMedico) {
         List<Consulta> consultas = ConsultaMapper.toListConsultas(
@@ -41,6 +44,7 @@ public class ConsultaQueryResolver {
         return consultas.stream().map(ConsultaGraphQLMapper::toConsultaDtoGraphQL).collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
     @QueryMapping
     public List<ConsultaDtoGraphQL> consultaPorPeriodo(@Argument LocalDateTime dataInicio,
                                                        @Argument LocalDateTime dataFim) {

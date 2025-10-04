@@ -42,7 +42,7 @@ eureka:
 grpc:
   client:
     usuario:
-      address: "static://clinicafiap-usuarios:9090"
+      address: "static://usuarios-service:9090"
       negotiationType: PLAINTEXT
 security:
   jwt:

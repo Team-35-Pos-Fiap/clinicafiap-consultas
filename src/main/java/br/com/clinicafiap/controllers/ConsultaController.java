@@ -35,7 +35,7 @@ public class ConsultaController {
 		this.consultaService = consultaService;
 	}
 
-	@PreAuthorize("hasAnyRole('ENFERMEIRO')")
+	@PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
 	@PostMapping
 	public ResponseEntity<Void> agendarConsulta(@Valid @RequestBody DadosConsultaDtoRequest dados) {
 		log.info("agendarConsulta - Dados da consulta: {}", dados);
@@ -45,7 +45,9 @@ public class ConsultaController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@PreAuthorize("hasAnyRole('MEDICO','ENFERMEIRO')")
+	@PreAuthorize(
+		"hasAnyRole('MEDICO','ENFERMEIRO') or @consultaSecurity.isPacienteDaConsulta(#idConsulta, principal.uid)"
+	)
 	@GetMapping("/{id-consulta}")
 	public ResponseEntity<DadosConsultaDtoResponse> buscarConsultaPorId(@PathVariable(name = "id-consulta") @NotNull @Valid UUID idConsulta) {
 		log.info("buscarConsultaPorId - Id: {}", idConsulta);
