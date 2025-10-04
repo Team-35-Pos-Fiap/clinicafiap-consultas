@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.clinicafiap.services.interfaces.INotificacaoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class ConsultaService implements IConsultaService {
 	private IConsultaRepository consultaRepository;
 	private IUsuarioService usuarioService;
 
+	@Autowired
+	private INotificacaoService notificacaoService;
+
 	public ConsultaService(IConsultaRepository consultaRepository, IUsuarioService usuarioService) {
 		this.consultaRepository = consultaRepository;
 		this.usuarioService = usuarioService;
@@ -38,6 +43,8 @@ public class ConsultaService implements IConsultaService {
 		validaUsuariosParaAgendamento(dados);
 
 		salvar(toConsulta(dados));
+
+		enviarNotificacao(toConsulta(dados));
 	}
 
 	@Override
@@ -101,11 +108,15 @@ public class ConsultaService implements IConsultaService {
 	private void enviarNotificacao(Consulta consulta) {
 		log.info("Dados da consulta: {}", consulta);
 
-		// incluir o método para adicionar a notificação no serviço de mensagerias.
+		UsuarioDto usuario = buscarUsuarioPorId(consulta.getIdPaciente());
+
+		notificacaoService.sendMessageNotificacao(consulta, usuario);
 	}
 
-	private UsuarioDto buscarUsuarioPorId(UUID idUsuarioCancelamento) {
-		return usuarioService.buscarPorId(idUsuarioCancelamento);
+	private UsuarioDto buscarUsuarioPorId(UUID idUsuario) {
+		// buscar do serviço de usuário, pois vai validar se o usuário existe ou não.
+		
+		return usuarioService.buscarPorId(idUsuario);
 	}
 
 	private void trataValidacoes(Consulta consulta, LocalDateTime data) {
