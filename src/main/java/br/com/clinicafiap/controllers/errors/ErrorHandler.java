@@ -1,8 +1,10 @@
 package br.com.clinicafiap.controllers.errors;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import br.com.clinicafiap.grpc.exceptions.*;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -108,5 +110,43 @@ public class ErrorHandler {
 		Map<String, String> error = new HashMap<>();
 		error.put("mensagem", ex.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	}
+
+	@ExceptionHandler(UsuarioNaoEncontradoException.class)
+	public ResponseEntity<MensagemResponse> trataUsuarioNaoEncontradoException(UsuarioNaoEncontradoException ex) {
+		log.error(ex.getMessage(), ex);
+
+		return getResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+	}
+
+	@ExceptionHandler(ParametroInvalidoException.class)
+	public ResponseEntity<MensagemResponse> trataParametroInvalidoException(ParametroInvalidoException ex) {
+		log.error(ex.getMessage(), ex);
+
+		return getResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+	}
+
+	@ExceptionHandler(ServicoIndisponivelException.class)
+	public ResponseEntity<MensagemResponse> trataServicoIndisponivelException(ServicoIndisponivelException ex) {
+		log.error(ex.getMessage(), ex);
+
+		return getResponse(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+	}
+
+	@ExceptionHandler(ErroInternoUsuariosException.class)
+	public ResponseEntity<MensagemResponse> trataErroInternoUsuariosException(ErroInternoUsuariosException ex) {
+		log.error(ex.getMessage(), ex);
+
+		return getResponse(HttpStatus.BAD_GATEWAY, ex.getMessage());
+	}
+
+	@ExceptionHandler(ValidacaoUsuariosException.class)
+	public ResponseEntity<Map<String, Object>> trataValidacaoUsuariosException(ValidacaoUsuariosException ex) {
+		var erros = ex.getErros();
+		Map<String, Object> body = new LinkedHashMap<>();
+
+		body.put("erros", erros);
+
+		return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
 	}
 }
