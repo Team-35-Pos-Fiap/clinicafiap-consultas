@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.clinicafiap.entities.dto.ErroUsuarioDto;
+import br.com.clinicafiap.grpc.exceptions.ValidacaoUsuariosException;
 import br.com.clinicafiap.services.interfaces.INotificacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -114,8 +116,6 @@ public class ConsultaService implements IConsultaService {
 	}
 
 	private UsuarioDto buscarUsuarioPorId(UUID idUsuario) {
-		// buscar do serviço de usuário, pois vai validar se o usuário existe ou não.
-		
 		return usuarioService.buscarPorId(idUsuario);
 	}
 
@@ -149,7 +149,11 @@ public class ConsultaService implements IConsultaService {
 		);
 
 		if (!validacao.getErrosList().isEmpty()) {
-			throw new IllegalArgumentException(validacao.getErrosList().toString());
+			List<ErroUsuarioDto> erros = validacao.getErrosList().stream()
+					.map(e -> new ErroUsuarioDto(e.getCampo(), e.getCodigo(), e.getMensagem()))
+					.toList();
+
+			throw new ValidacaoUsuariosException(erros);
 		}
 	}
 
