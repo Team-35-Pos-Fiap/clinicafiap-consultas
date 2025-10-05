@@ -29,9 +29,12 @@ public class NotificacaoService implements INotificacaoService {
         NotificacaoRecord notificacao = new NotificacaoRecord(
                 usuario.email(),
                 "Consulta " + consulta.getStatus(),
-                "Saudações sr(a) " + usuario.nome() +
-                        ", sua consulta foi " + consulta.getStatus() +
-                        " com sucesso para o dia " + consulta.getDataConsulta().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"))
+                "Saudações, sr(a) " + usuario.nome() +
+                        ", \n\n" +
+                        "Sua consulta foi " + consulta.getStatus() +
+                        " com sucesso para o dia " + consulta.getDataConsulta().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm")) + "." +
+                        "\n\n" +
+                        "Atenciosamente, \nClínica Fiap."
         );
 
         System.out.println("Sent message to partition: " + partition);
