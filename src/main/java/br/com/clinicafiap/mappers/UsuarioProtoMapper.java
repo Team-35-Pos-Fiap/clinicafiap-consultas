@@ -23,8 +23,8 @@ public class UsuarioProtoMapper {
         return new UsuarioDto(
                 UUID.fromString(usuarioResponse.getId()),
                 usuarioResponse.getNome(),
-                perfilNome,
-                usuarioResponse.getEmail()
+                usuarioResponse.getEmail(),
+                perfilNome
         );
     }
 }
