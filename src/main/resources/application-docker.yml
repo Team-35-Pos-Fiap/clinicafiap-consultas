@@ -27,6 +27,8 @@ spring:
     path: /graphql
     graphiql:
       enabled: true
+  kafka:
+    bootstrap-servers: kafka:9092
 server:
   servlet:
     context-path: /

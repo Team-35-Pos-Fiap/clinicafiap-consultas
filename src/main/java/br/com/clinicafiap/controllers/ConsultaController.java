@@ -56,12 +56,6 @@ public class ConsultaController {
 	}
 
 	@PreAuthorize("hasAnyRole('MEDICO','ENFERMEIRO')")
-	@GetMapping("/periodo")
-	public ResponseEntity<List<DadosConsultaDtoResponse>> buscarConsultasPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
-		return null;
-	}
-
-	@PreAuthorize("hasAnyRole('MEDICO','ENFERMEIRO')")
 	@GetMapping("/medicos/{id-medico}")
 	public ResponseEntity<List<DadosConsultaDtoResponse>> buscarConsultasPorMedico(@PathVariable(name = "id-medico") @Valid @NotNull UUID idMedico) {
 		return ResponseEntity.status(HttpStatus.OK).body(consultaService.buscarConsultasPorMedico(idMedico));
